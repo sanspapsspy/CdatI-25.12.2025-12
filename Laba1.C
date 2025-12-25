@@ -57,6 +57,8 @@ bool occurs_more_than_once(const int* arr, int size, int value) {
 
 // Функция для вывода массива
 void print_array(const char* label, const int* arr, int size) {
+    int i;
+    
     printf("%s: ", label);
     if (size == 0) {
         printf("пустой массив\n");
@@ -64,7 +66,7 @@ void print_array(const char* label, const int* arr, int size) {
     }
 
     printf("[");
-    for (int i = 0; i < size; i++) {
+    for (i = 0; i < size; i++) {
         printf("%d", arr[i]);
         if (i < size - 1) {
             printf(", ");
@@ -75,9 +77,12 @@ void print_array(const char* label, const int* arr, int size) {
 
 // ЗАДАНИЕ 1: Массив C содержит нечетные элементы А, которых нет в В
 int* task1(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
-    // Определяем максимально возможный размер результата
     int maxSize = 0;
-    for (int i = 0; i < sizeA; i++) {
+    int* C = NULL;
+    int i;
+    
+    // Определяем максимально возможный размер результата
+    for (i = 0; i < sizeA; i++) {
         if (A[i] % 2 != 0) { // нечетный
             if (!contains(B, sizeB, A[i])) { // не содержится в B
                 maxSize++;
@@ -86,11 +91,11 @@ int* task1(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
     }
 
     // Выделяем память для результата
-    int* C = (int*)malloc(maxSize * sizeof(int));
+    C = (int*)malloc(maxSize * sizeof(int));
     *resultSize = 0;
 
     // Заполняем массив C
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (A[i] % 2 != 0) { // нечетный элемент A
             if (!contains(B, sizeB, A[i])) { // которого нет в B
                 C[*resultSize] = A[i];
@@ -104,17 +109,21 @@ int* task1(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // ЗАДАНИЕ 2: Массив C содержит элементы А, которые есть в В более, чем в одном экземпляре
 int* task2(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    bool* added = NULL;
+    int maxSize = 0;
+    int* C = NULL;
+    int i, j;
+    
     // Временный массив для отслеживания уже добавленных элементов
-    bool* added = (bool*)calloc(sizeA, sizeof(bool));
+    added = (bool*)calloc(sizeA, sizeof(bool));
 
     // Определяем максимально возможный размер результата
-    int maxSize = 0;
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             if (contains(B, sizeB, A[i]) && occurs_more_than_once(B, sizeB, A[i])) {
                 maxSize++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -124,22 +133,22 @@ int* task2(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
     }
 
     // Выделяем память для результата
-    int* C = (int*)malloc(maxSize * sizeof(int));
+    C = (int*)malloc(maxSize * sizeof(int));
     *resultSize = 0;
 
     // Сбрасываем массив added
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         added[i] = false;
     }
 
     // Заполняем массив C
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             if (contains(B, sizeB, A[i]) && occurs_more_than_once(B, sizeB, A[i])) {
                 C[*resultSize] = A[i];
                 (*resultSize)++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -154,18 +163,23 @@ int* task2(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // ЗАДАНИЕ 3: Массив C содержит неповторяющиеся элементы А, которых нет в В
 int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    bool* added = NULL;
+    int maxSize = 0;
+    int* C = NULL;
+    int i, j;
+    bool is_unique;
+    
     // Временный массив для отслеживания уже добавленных элементов
-    bool* added = (bool*)calloc(sizeA, sizeof(bool));
+    added = (bool*)calloc(sizeA, sizeof(bool));
 
     // Определяем максимально возможный размер результата
-    int maxSize = 0;
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             // Проверяем, что элемент уникален в A и не содержится в B
             if (!contains(B, sizeB, A[i])) {
-                bool is_unique = true;
+                is_unique = true;
                 // Проверяем уникальность в A
-                for (int j = 0; j < sizeA; j++) {
+                for (j = 0; j < sizeA; j++) {
                     if (i != j && A[i] == A[j]) {
                         is_unique = false;
                         break;
@@ -176,7 +190,7 @@ int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
                 }
             }
             // Помечаем все одинаковые элементы
-            for (int j = i; j < sizeA; j++) {
+            for (j = i; j < sizeA; j++) {
                 if (A[j] == A[i]) {
                     added[j] = true;
                 }
@@ -185,22 +199,22 @@ int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
     }
 
     // Выделяем память для результат
-    int* C = (int*)malloc(maxSize * sizeof(int));
+    C = (int*)malloc(maxSize * sizeof(int));
     *resultSize = 0;
 
     // Сбрасываем массив added
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         added[i] = false;
     }
 
     // Заполняем массив C
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             // Проверяем, что элемент уникален в A и не содержится в B
             if (!contains(B, sizeB, A[i])) {
-                bool is_unique = true;
+                is_unique = true;
                 // Проверяем уникальность в A
-                for (int j = 0; j < sizeA; j++) {
+                for (j = 0; j < sizeA; j++) {
                     if (i != j && A[i] == A[j]) {
                         is_unique = false;
                         break;
@@ -212,7 +226,7 @@ int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
                 }
             }
             // Помечаем все одинаковые элементы
-            for (int j = i; j < sizeA; j++) {
+            for (j = i; j < sizeA; j++) {
                 if (A[j] == A[i]) {
                     added[j] = true;
                 }
@@ -226,17 +240,21 @@ int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // ЗАДАНИЕ 4: Массив C содержит четные элементы А, которые есть в В
 int* task4(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    bool* added = NULL;
+    int maxSize = 0;
+    int* C = NULL;
+    int i, j;
+    
     // Временный массив для отслеживания уже добавленных элементов
-    bool* added = (bool*)calloc(sizeA, sizeof(bool));
+    added = (bool*)calloc(sizeA, sizeof(bool));
 
     // Определяем максимально возможный размер результата
-    int maxSize = 0;
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             if (A[i] % 2 == 0 && contains(B, sizeB, A[i])) {
                 maxSize++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -246,22 +264,22 @@ int* task4(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
     }
 
     // Выделяем память для результата
-    int* C = (int*)malloc(maxSize * sizeof(int));
+    C = (int*)malloc(maxSize * sizeof(int));
     *resultSize = 0;
 
     // Сбрасываем массив added
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         added[i] = false;
     }
 
     // Заполняем массив C
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
             if (A[i] % 2 == 0 && contains(B, sizeB, A[i])) {
                 C[*resultSize] = A[i];
                 (*resultSize)++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -276,16 +294,21 @@ int* task4(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // ЗАДАНИЕ 5: Массив C содержит элементы А по модулю равные некоторым элементам В
 int* task5(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    bool* added = NULL;
+    int maxSize = 0;
+    int* C = NULL;
+    int i, j;
+    bool found;
+    
     // Временный массив для отслеживания уже добавленных элементов
-    bool* added = (bool*)calloc(sizeA, sizeof(bool));
+    added = (bool*)calloc(sizeA, sizeof(bool));
 
     // Определяем максимально возможный размер результата
-    int maxSize = 0;
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
-            bool found = false;
+            found = false;
             // Проверяем, есть ли в B элемент с таким же модулем
-            for (int j = 0; j < sizeB; j++) {
+            for (j = 0; j < sizeB; j++) {
                 if (abs(A[i]) == abs(B[j])) {
                     found = true;
                     break;
@@ -294,7 +317,7 @@ int* task5(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
             if (found) {
                 maxSize++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -304,20 +327,20 @@ int* task5(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
     }
 
     // Выделяем память для результата
-    int* C = (int*)malloc(maxSize * sizeof(int));
+    C = (int*)malloc(maxSize * sizeof(int));
     *resultSize = 0;
 
     // Сбрасываем массив added
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         added[i] = false;
     }
 
     // Заполняем массив C
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (!added[i]) {
-            bool found = false;
+            found = false;
             // Проверяем, есть ли в B элемент с таким же модулем
-            for (int j = 0; j < sizeB; j++) {
+            for (j = 0; j < sizeB; j++) {
                 if (abs(A[i]) == abs(B[j])) {
                     found = true;
                     break;
@@ -327,7 +350,7 @@ int* task5(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
                 C[*resultSize] = A[i];
                 (*resultSize)++;
                 // Помечаем все одинаковые элементы как добавленные
-                for (int j = i; j < sizeA; j++) {
+                for (j = i; j < sizeA; j++) {
                     if (A[j] == A[i]) {
                         added[j] = true;
                     }
@@ -342,7 +365,9 @@ int* task5(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // ЗАДАНИЕ 6: Найти последний по порядку элемент, являющийся простым числом
 int task6(const int* A, int sizeA) {
-    for (int i = sizeA - 1; i >= 0; i--) {
+    int i;
+    
+    for (i = sizeA - 1; i >= 0; i--) {
         if (is_prime(A[i])) {
             return A[i];
         }
@@ -353,12 +378,40 @@ int task6(const int* A, int sizeA) {
 // Основная функция для демонстрации работы
 int main() {
     // Тестовые данные
-    setlocale(LC_ALL, ("Rus"));
     int A[] = { 2, 3, 5, 7, 3, 8, 10, 5, 13, 17, 19, 4, 6, 8, -5, -3 };
     int B[] = { 3, 5, 8, 10, 12, 14, 16, 3, 5, 7, -3, -5 };
-
     int sizeA = sizeof(A) / sizeof(A[0]);
     int sizeB = sizeof(B) / sizeof(B[0]);
+    
+    // Для задания 1
+    int sizeC1;
+    int* C1 = NULL;
+    
+    // Для задания 2
+    int sizeC2;
+    int* C2 = NULL;
+    
+    // Для задания 3
+    int sizeC3;
+    int* C3 = NULL;
+    
+    // Для задания 4
+    int sizeC4;
+    int* C4 = NULL;
+    
+    // Для задания 5
+    int sizeC5;
+    int* C5 = NULL;
+    
+    // Для задания 6
+    int last_prime;
+    
+    // Для дополнительного примера
+    int testArray[] = { 4, 6, 8, 9, 10, 12, 14, 15 };
+    int testSize = sizeof(testArray) / sizeof(testArray[0]);
+    int result;
+
+    setlocale(LC_ALL, ("Rus"));
 
     printf("Исходные массивы:\n");
     print_array("A", A, sizeA);
@@ -373,8 +426,7 @@ int main() {
     printf("Исключаем те, что есть в B (3, 5, 7, -3, -5)\n");
     printf("Остаются: 13, 17, 19\n");
     printf("Результат: ");
-    int sizeC1;
-    int* C1 = task1(A, sizeA, B, sizeB, &sizeC1);
+    C1 = task1(A, sizeA, B, sizeB, &sizeC1);
     print_array("C", C1, sizeC1);
     free(C1);
     printf("\n");
@@ -387,8 +439,7 @@ int main() {
     printf("В массиве A эти элементы: 3, 5, 3, 5\n");
     printf("Уникальные значения: 3, 5\n");
     printf("Результат: ");
-    int sizeC2;
-    int* C2 = task2(A, sizeA, B, sizeB, &sizeC2);
+    C2 = task2(A, sizeA, B, sizeB, &sizeC2);
     print_array("C", C2, sizeC2);
     free(C2);
     printf("\n");
@@ -401,8 +452,7 @@ int main() {
     printf("Исключаем те, что есть в B (8, 10, -3, -5)\n");
     printf("Остаются: 2, 7, 13, 17, 19, 4, 6\n");
     printf("Результат: ");
-    int sizeC3;
-    int* C3 = task3(A, sizeA, B, sizeB, &sizeC3);
+    C3 = task3(A, sizeA, B, sizeB, &sizeC3);
     print_array("C", C3, sizeC3);
     free(C3);
     printf("\n");
@@ -415,8 +465,7 @@ int main() {
     printf("Из них есть в B: 8, 10\n");
     printf("Уникальные значения: 8, 10\n");
     printf("Результат: ");
-    int sizeC4;
-    int* C4 = task4(A, sizeA, B, sizeB, &sizeC4);
+    C4 = task4(A, sizeA, B, sizeB, &sizeC4);
     print_array("C", C4, sizeC4);
     free(C4);
     printf("\n");
@@ -439,8 +488,7 @@ int main() {
     printf("|6| → нет в B\n");
     printf("Уникальные значения из A: 3, 5, 7, 8, 10, -3, -5\n");
     printf("Результат: ");
-    int sizeC5;
-    int* C5 = task5(A, sizeA, B, sizeB, &sizeC5);
+    C5 = task5(A, sizeA, B, sizeB, &sizeC5);
     print_array("C", C5, sizeC5);
     free(C5);
     printf("\n");
@@ -451,7 +499,7 @@ int main() {
     printf("Ожидаемый результат:\n");
     printf("Простые числа в A: 2, 3, 5, 7, 3, 5, 13, 17, 19\n");
     printf("Последний по порядку (с конца): 19\n");
-    int last_prime = task6(A, sizeA);
+    last_prime = task6(A, sizeA);
     if (last_prime != -1) {
         printf("Результат: %d\n", last_prime);
     }
@@ -461,11 +509,9 @@ int main() {
 
     // Дополнительный пример для задачи 6
     printf("\nДополнительный пример для задачи 6:\n");
-    int testArray[] = { 4, 6, 8, 9, 10, 12, 14, 15 };
-    int testSize = sizeof(testArray) / sizeof(testArray[0]);
     print_array("Массив", testArray, testSize);
     printf("Ожидаемый результат: нет простых чисел\n");
-    int result = task6(testArray, testSize);
+    result = task6(testArray, testSize);
     if (result != -1) {
         printf("Последний простой элемент: %d\n", result);
     }
