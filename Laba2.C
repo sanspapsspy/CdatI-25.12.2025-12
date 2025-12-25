@@ -4,11 +4,14 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <locale.h>
+
 // Вспомогательные функции
 
 // Функция для проверки, содержит ли массив элемент
 bool contains(const int* arr, int size, int value) {
-    for (int i = 0; i < size; i++) {
+    int i;
+    
+    for (i = 0; i < size; i++) {
         if (arr[i] == value) {
             return true;
         }
@@ -19,7 +22,9 @@ bool contains(const int* arr, int size, int value) {
 // Функция для подсчета количества вхождений элемента в массив
 int count_occurrences(const int* arr, int size, int value) {
     int count = 0;
-    for (int i = 0; i < size; i++) {
+    int i;
+    
+    for (i = 0; i < size; i++) {
         if (arr[i] == value) {
             count++;
         }
@@ -29,9 +34,13 @@ int count_occurrences(const int* arr, int size, int value) {
 
 // Функция для поиска минимального элемента в массиве
 int find_min(const int* arr, int size) {
+    int min;
+    int i;
+    
     if (size == 0) return 0;
-    int min = arr[0];
-    for (int i = 1; i < size; i++) {
+    min = arr[0];
+    
+    for (i = 1; i < size; i++) {
         if (arr[i] < min) {
             min = arr[i];
         }
@@ -41,9 +50,13 @@ int find_min(const int* arr, int size) {
 
 // Функция для поиска максимального элемента в массиве
 int find_max(const int* arr, int size) {
+    int max;
+    int i;
+    
     if (size == 0) return 0;
-    int max = arr[0];
-    for (int i = 1; i < size; i++) {
+    max = arr[0];
+    
+    for (i = 1; i < size; i++) {
         if (arr[i] > max) {
             max = arr[i];
         }
@@ -53,13 +66,18 @@ int find_max(const int* arr, int size) {
 
 // Функция для поиска ближайшего по модулю элемента в массиве B
 int find_closest_by_abs(const int* B, int sizeB, int value) {
+    int closest;
+    int min_diff;
+    int diff;
+    int i;
+    
     if (sizeB == 0) return 0;
 
-    int closest = B[0];
-    int min_diff = abs(value - B[0]);
+    closest = B[0];
+    min_diff = abs(value - B[0]);
 
-    for (int i = 1; i < sizeB; i++) {
-        int diff = abs(value - B[i]);
+    for (i = 1; i < sizeB; i++) {
+        diff = abs(value - B[i]);
         if (diff < min_diff) {
             min_diff = diff;
             closest = B[i];
@@ -71,6 +89,8 @@ int find_closest_by_abs(const int* B, int sizeB, int value) {
 
 // Функция для вывода массива
 void print_array(const char* label, const int* arr, int size) {
+    int i;
+    
     printf("%s: ", label);
     if (size == 0) {
         printf("пустой массив\n");
@@ -78,7 +98,7 @@ void print_array(const char* label, const int* arr, int size) {
     }
 
     printf("[");
-    for (int i = 0; i < size; i++) {
+    for (i = 0; i < size; i++) {
         printf("%d", arr[i]);
         if (i < size - 1) {
             printf(", ");
@@ -91,14 +111,18 @@ void print_array(const char* label, const int* arr, int size) {
 // Интерпретация: Для каждого элемента массива A, если он четный, то в массив C добавляем этот элемент плюс количество его вхождений в B
 // Если элемент A нечетный, то просто добавляем его в C без изменений
 int* task1(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    int* C = NULL;
+    int i;
+    int count_in_B;
+    
     // Результирующий массив будет такого же размера, как A
-    int* C = (int*)malloc(sizeA * sizeof(int));
+    C = (int*)malloc(sizeA * sizeof(int));
     *resultSize = sizeA;
 
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (A[i] % 2 == 0) {
             // Четный элемент: добавляем элемент + количество его вхождений в B
-            int count_in_B = count_occurrences(B, sizeB, A[i]);
+            count_in_B = count_occurrences(B, sizeB, A[i]);
             C[i] = A[i] + count_in_B;
         }
         else {
@@ -113,18 +137,24 @@ int* task1(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 // ЗАДАНИЕ 2: Массив C, где после каждого элемента А вставлен ближайший по модулю элемент из массива В
 // Интерпретация: Создаем массив C, чередуя элементы A и их ближайшие по модулю элементы из B
 int* task2(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    int* C = NULL;
+    int newSize;
+    int index;
+    int i;
+    int closest;
+    
     // Результирующий массив будет в два раза больше A (если sizeA > 0)
-    int newSize = (sizeA > 0) ? sizeA * 2 : 0;
-    int* C = (int*)malloc(newSize * sizeof(int));
+    newSize = (sizeA > 0) ? sizeA * 2 : 0;
+    C = (int*)malloc(newSize * sizeof(int));
     *resultSize = newSize;
 
-    int index = 0;
-    for (int i = 0; i < sizeA; i++) {
+    index = 0;
+    for (i = 0; i < sizeA; i++) {
         // Добавляем элемент из A
         C[index++] = A[i];
 
         // Добавляем ближайший по модулю элемент из B
-        int closest = find_closest_by_abs(B, sizeB, A[i]);
+        closest = find_closest_by_abs(B, sizeB, A[i]);
         C[index++] = closest;
     }
 
@@ -136,15 +166,20 @@ int* task2(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 // - если элемент A четный: A[i] + min(B)
 // - если элемент A нечетный: A[i] + max(B)
 int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
+    int* C = NULL;
+    int min_B;
+    int max_B;
+    int i;
+    
     // Предварительно находим min и max в массиве B
-    int min_B = (sizeB > 0) ? find_min(B, sizeB) : 0;
-    int max_B = (sizeB > 0) ? find_max(B, sizeB) : 0;
+    min_B = (sizeB > 0) ? find_min(B, sizeB) : 0;
+    max_B = (sizeB > 0) ? find_max(B, sizeB) : 0;
 
     // Результирующий массив будет такого же размера, как A
-    int* C = (int*)malloc(sizeA * sizeof(int));
+    C = (int*)malloc(sizeA * sizeof(int));
     *resultSize = sizeA;
 
-    for (int i = 0; i < sizeA; i++) {
+    for (i = 0; i < sizeA; i++) {
         if (A[i] % 2 == 0) {
             // Четный элемент: добавляем минимальный элемент из B
             C[i] = A[i] + min_B;
@@ -160,13 +195,57 @@ int* task3(const int* A, int sizeA, const int* B, int sizeB, int* resultSize) {
 
 // Основная функция для демонстрации работы
 int main() {
-    setlocale(LC_ALL, ("Rus"));
     // Тестовые данные (общие для всех задач)
     int A[] = { 2, 3, 5, 7, 8, 10, 4, 6, 12, 15 };
     int B[] = { 3, 5, 8, 10, 3, 5, 7, 12, 15, 20 };
-
     int sizeA = sizeof(A) / sizeof(A[0]);
     int sizeB = sizeof(B) / sizeof(B[0]);
+    
+    // Для задания 1
+    int sizeC1;
+    int* C1 = NULL;
+    
+    // Для задания 2
+    int sizeC2;
+    int* C2 = NULL;
+    
+    // Для задания 3
+    int sizeC3;
+    int* C3 = NULL;
+    
+    // Для дополнительных тестов
+    int A2[] = { 1, 2, 3 };
+    int B2[] = {};
+    int sizeA2;
+    int sizeB2;
+    int sizeC1b;
+    int* C1b = NULL;
+    int sizeC2b;
+    int* C2b = NULL;
+    int sizeC3b;
+    int* C3b = NULL;
+    
+    // Для теста с отрицательными числами
+    int A3[] = { -2, -3, -4, -5 };
+    int B3[] = { -1, -2, -3, 0, 1, 2 };
+    int sizeA3;
+    int sizeB3;
+    int sizeC1c;
+    int* C1c = NULL;
+    int sizeC2c;
+    int* C2c = NULL;
+    int sizeC3c;
+    int* C3c = NULL;
+
+    setlocale(LC_ALL, ("Rus"));
+
+    // Вычисляем размеры массивов
+    sizeA = sizeof(A) / sizeof(A[0]);
+    sizeB = sizeof(B) / sizeof(B[0]);
+    sizeA2 = sizeof(A2) / sizeof(A2[0]);
+    sizeB2 = 0;
+    sizeA3 = sizeof(A3) / sizeof(A3[0]);
+    sizeB3 = sizeof(B3) / sizeof(B3[0]);
 
     printf("Исходные массивы:\n");
     print_array("A", A, sizeA);
@@ -189,8 +268,7 @@ int main() {
     printf("- Нечетные элементы A: 3, 5, 7, 15 (остаются без изменений)\n");
     printf("Ожидаемый результат C: [2, 3, 5, 7, 9, 11, 4, 6, 13, 15]\n");
     printf("Результат: ");
-    int sizeC1;
-    int* C1 = task1(A, sizeA, B, sizeB, &sizeC1);
+    C1 = task1(A, sizeA, B, sizeB, &sizeC1);
     print_array("C", C1, sizeC1);
     free(C1);
     printf("\n");
@@ -212,8 +290,7 @@ int main() {
     printf("A[9]=15 → ближайшие в B: есть сам 15 → выбираем 15\n");
     printf("Ожидаемый результат C: [2, 3, 3, 3, 5, 5, 7, 7, 8, 8, 10, 10, 4, 3, 6, 5, 12, 12, 15, 15]\n");
     printf("Результат: ");
-    int sizeC2;
-    int* C2 = task2(A, sizeA, B, sizeB, &sizeC2);
+    C2 = task2(A, sizeA, B, sizeB, &sizeC2);
     print_array("C", C2, sizeC2);
     free(C2);
     printf("\n");
@@ -239,8 +316,7 @@ int main() {
     printf("  15 + 20 = 35\n");
     printf("Ожидаемый результат C: [5, 23, 25, 27, 11, 13, 7, 9, 15, 35]\n");
     printf("Результат: ");
-    int sizeC3;
-    int* C3 = task3(A, sizeA, B, sizeB, &sizeC3);
+    C3 = task3(A, sizeA, B, sizeB, &sizeC3);
     print_array("C", C3, sizeC3);
     free(C3);
     printf("\n");
@@ -250,51 +326,37 @@ int main() {
 
     // Тест 1: Пустой массив B
     printf("\n1. Тест с пустым массивом B:\n");
-    int A2[] = { 1, 2, 3 };
-    int B2[] = {};
-    int sizeA2 = sizeof(A2) / sizeof(A2[0]);
-    int sizeB2 = 0;
-
     print_array("A", A2, sizeA2);
     print_array("B", B2, sizeB2);
 
     // Задание 1 с пустым B
     printf("Задание 1 (пустой B): ");
-    int sizeC1b;
-    int* C1b = task1(A2, sizeA2, B2, sizeB2, &sizeC1b);
+    C1b = task1(A2, sizeA2, B2, sizeB2, &sizeC1b);
     print_array("C", C1b, sizeC1b);
     free(C1b);
 
     // Задание 2 с пустым B
     printf("Задание 2 (пустой B): ближайший элемент будет 0 (по умолчанию)\n");
     printf("Результат: ");
-    int sizeC2b;
-    int* C2b = task2(A2, sizeA2, B2, sizeB2, &sizeC2b);
+    C2b = task2(A2, sizeA2, B2, sizeB2, &sizeC2b);
     print_array("C", C2b, sizeC2b);
     free(C2b);
 
     // Задание 3 с пустым B
     printf("Задание 3 (пустой B): min(B)=0, max(B)=0\n");
     printf("Результат: ");
-    int sizeC3b;
-    int* C3b = task3(A2, sizeA2, B2, sizeB2, &sizeC3b);
+    C3b = task3(A2, sizeA2, B2, sizeB2, &sizeC3b);
     print_array("C", C3b, sizeC3b);
     free(C3b);
 
     // Тест 2: Отрицательные числа
     printf("\n2. Тест с отрицательными числами:\n");
-    int A3[] = { -2, -3, -4, -5 };
-    int B3[] = { -1, -2, -3, 0, 1, 2 };
-    int sizeA3 = sizeof(A3) / sizeof(A3[0]);
-    int sizeB3 = sizeof(B3) / sizeof(B3[0]);
-
     print_array("A", A3, sizeA3);
     print_array("B", B3, sizeB3);
 
     // Задание 1 с отрицательными числами
     printf("Задание 1 (отрицательные): ");
-    int sizeC1c;
-    int* C1c = task1(A3, sizeA3, B3, sizeB3, &sizeC1c);
+    C1c = task1(A3, sizeA3, B3, sizeB3, &sizeC1c);
     print_array("C", C1c, sizeC1c);
     free(C1c);
 
@@ -306,16 +368,14 @@ int main() {
     printf("A[2]=-4 → ближайшие: |-4-(-3)|=1, |-4-(-2)|=2 → выбираем -3\n");
     printf("A[3]=-5 → ближайшие: |-5-(-3)|=2, |-5-(-2)|=3 → выбираем -3\n");
     printf("Результат: ");
-    int sizeC2c;
-    int* C2c = task2(A3, sizeA3, B3, sizeB3, &sizeC2c);
+    C2c = task2(A3, sizeA3, B3, sizeB3, &sizeC2c);
     print_array("C", C2c, sizeC2c);
     free(C2c);
 
     // Задание 3 с отрицательными числами
     printf("Задание 3 (отрицательные): min(B)=-3, max(B)=2\n");
     printf("Результат: ");
-    int sizeC3c;
-    int* C3c = task3(A3, sizeA3, B3, sizeB3, &sizeC3c);
+    C3c = task3(A3, sizeA3, B3, sizeB3, &sizeC3c);
     print_array("C", C3c, sizeC3c);
     free(C3c);
 
